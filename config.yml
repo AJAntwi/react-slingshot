@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  build-job:
+    docker:
+      - image: cimg/node:12.16
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - run:
+          name: "Run NPM"
+          command: npm run lint
+      
+  test-job:
+    docker:
+      - image: cimg/node:12.16
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - run:
+          name: "Test NPM"
+          command: npm run test
+
+  analyze-job:
+    docker:
+      - image: cimg/node:12.16
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - run:
+          name: "Run an audit in NPM"
+          command: npm audit
+
+workflows:
+  CI-Pipeline:
+    jobs:
+      - build-job
+      - test-job:
+          requires:
+            - build-job
+      - analyze-job:
+          requires:
+            - test-job
